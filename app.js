@@ -1,15 +1,20 @@
-const mongoose=require("mongoose")
+const mongoose1=require("mongoose")
+const mongoose2=require("mongoose")
 const cors=require("cors")
 const express=require("express")
 const bcrypt=require("bcryptjs")
 const {usermodel}=require("./models/user")
+const {busmodel}=require("./models/bus")
 const jwt=require("jsonwebtoken")
 
 const app=express()
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect("mongodb+srv://Richi2001:R1CH1R0Y@cluster0.ulfkc.mongodb.net/KsrtcUserDB?retryWrites=true&w=majority&appName=Cluster0")
+mongoose1.connect("mongodb+srv://Richi2001:R1CH1R0Y@cluster0.ulfkc.mongodb.net/KsrtcUserDB?retryWrites=true&w=majority&appName=Cluster0")
+mongoose2.connect("mongodb+srv://Richi2001:R1CH1R0Y@cluster0.ulfkc.mongodb.net/KsrtcUserDB?retryWrites=true&w=majority&appName=Cluster0")
+
+//User:
 
 const generateHashedPassword=async(password)=>{
     const salt=await bcrypt.genSalt(10)
@@ -77,6 +82,51 @@ app.post("/viewusers",(req,res)=>{
         }
     })
 })
+
+//Bus:
+
+app.post("/add",(req,res)=>{
+    let input=req.body
+    let bus=new busmodel(input)
+    console.log(bus)
+    bus.save()
+    res.json({status:"success"})
+})
+
+app.post("/search",(req,res)=>{
+    let input=req.body
+    busmodel.find(input).then(
+        (data)=>{
+            res.json(data)
+        }
+    ).catch()
+})
+
+app.post("/remove",(req,res)=>{
+    let input=req.body
+    busmodel.findByIdAndDelete(input._id).then(
+        (response)=>{
+            res.json({status:"success"})
+        }
+    ).catch(
+        (error)=>{
+            res.json({status:"error"})
+        }
+    )
+})
+
+app.get("/view",(req,res)=>{
+    busmodel.find().then(
+        (data)=>{
+            res.json(data)
+        }
+    ).catch(
+        (error)=>{
+            alert(error.message)
+        }
+    )
+})
+
 
 app.listen(8535,()=>{
     console.log("server started")
