@@ -115,7 +115,7 @@ app.post("/remove",(req,res)=>{
     )
 })
 
-app.get("/view",(req,res)=>{
+app.post("/view",(req,res)=>{
     busmodel.find().then(
         (data)=>{
             res.json(data)
